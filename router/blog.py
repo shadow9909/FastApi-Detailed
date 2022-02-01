@@ -31,3 +31,7 @@ def blog(id: BlogType, blog: BlogModel, content: str = Body(..., min_length=10, 
     # version: Optional[List[str]] = Query(None)
     # response.status_code = 200
     return {'blog': blog}
+
+
+def required_functionality():
+    return {'message': 'FastAPI is important'}

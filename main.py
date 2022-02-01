@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Depends
 from enum import Enum
 from router import blog
 
@@ -30,6 +30,11 @@ def hello():
 #     return {'detail': f"{id} is found"}
 
 app.include_router(blog.router)
+
+
+@app.get('/dependency')
+def dependency_demo(req_param: dict = Depends(blog.required_functionality)):
+    return req_param
 
 
 @app.api_route("/{path_name:path}", methods=["GET"], status_code=404)
