@@ -3,7 +3,7 @@ from fastapi import APIRouter, Response, Body, Query, Path, Depends
 from enum import Enum
 from typing import Optional, List, Dict
 from pydantic import BaseModel
-from schemas import UserBase, UserDisplay
+from schemas import UserBase, UserDisplay, User
 from sqlalchemy.orm import Session
 from db.db_user import create_user, get_all_users, get_user_id, update_user_db, delete_user_db
 from db.database import get_db

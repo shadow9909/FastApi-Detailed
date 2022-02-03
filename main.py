@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import FastAPI, Request, Response, Depends
 from enum import Enum
-from router import blog, user
+from router import article, blog, user
 from db import models
 from db.database import engine
 app = FastAPI()
@@ -32,6 +32,7 @@ def hello():
 
 app.include_router(blog.router)
 app.include_router(user.router)
+app.include_router(article.router)
 
 
 @app.get('/dependency')

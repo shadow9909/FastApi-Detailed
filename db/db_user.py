@@ -24,7 +24,9 @@ def get_all_users(db: Session):
 
 
 def get_user_id(db: Session, id: int):
-    return db.query(DbUser).filter(DbUser.id == id).first()
+    user = db.query(DbUser).filter(DbUser.id == id).first()
+    print(user.articles)
+    return user
 
 
 def update_user_db(id: int, request: UserBase, db: Session):
