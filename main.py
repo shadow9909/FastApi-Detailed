@@ -1,8 +1,9 @@
 from typing import Optional
 from fastapi import FastAPI, Request, Response, Depends
 from enum import Enum
-from router import blog
-
+from router import blog, user
+from db import models
+from db.database import engine
 app = FastAPI()
 
 
@@ -30,6 +31,7 @@ def hello():
 #     return {'detail': f"{id} is found"}
 
 app.include_router(blog.router)
+app.include_router(user.router)
 
 
 @app.get('/dependency')
@@ -40,3 +42,6 @@ def dependency_demo(req_param: dict = Depends(blog.required_functionality)):
 @app.api_route("/{path_name:path}", methods=["GET"], status_code=404)
 async def catch_all(request: Request, path_name: str):
     return {"request_method": request.method, "path_name": path_name}
+
+
+models.Base.metadata.create_all(engine)
