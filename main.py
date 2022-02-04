@@ -1,9 +1,14 @@
+from http.client import HTTPException
 from typing import Optional
+from exceptions import StoryException
 from fastapi import FastAPI, Request, Response, Depends
 from enum import Enum
 from router import article, blog, user
 from db import models
 from db.database import engine
+from fastapi.responses import JSONResponse
+from fastapi.responses import PlainTextResponse
+
 app = FastAPI()
 
 
@@ -38,6 +43,19 @@ app.include_router(article.router)
 @app.get('/dependency')
 def dependency_demo(req_param: dict = Depends(blog.required_functionality)):
     return req_param
+
+
+@app.exception_handler(StoryException)
+def story_exception_handler(request: Request, exc: StoryException):
+    return JSONResponse(
+        status_code=418,
+        content={"message": "No Stories Please"}
+    )
+
+
+# @app.exception_handler(HTTPException)
+# def http_exception(request: Request, exc: StoryException):
+#     return PlainTextResponse(str(exc), status_code=400)
 
 
 @app.api_route("/{path_name:path}", methods=["GET"], status_code=404)

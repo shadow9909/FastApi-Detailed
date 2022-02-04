@@ -1,12 +1,12 @@
-
-
 from sqlalchemy.orm import Session
 from schemas import UserBase
 from .models import DbUser
 from .hashing import get_password_hash
+from fastapi import HTTPException
 
 
 def create_user(db: Session, requests: UserBase):
+
     new_user = DbUser(
         username=requests.username,
         email=requests.email,
@@ -25,12 +25,17 @@ def get_all_users(db: Session):
 
 def get_user_id(db: Session, id: int):
     user = db.query(DbUser).filter(DbUser.id == id).first()
-    print(user.articles)
+    if not user:
+        raise HTTPException(
+            status_code=404, detail=f'User with {id} not found')
     return user
 
 
 def update_user_db(id: int, request: UserBase, db: Session):
     user = db.query(DbUser).filter(DbUser.id == id).first()
+    if not user:
+        raise HTTPException(
+            status_code=404, detail=f'User with {id} not found')
     if user:
         user.username = request.username
         user.email = request.email
@@ -40,5 +45,9 @@ def update_user_db(id: int, request: UserBase, db: Session):
 
 
 def delete_user_db(id: int, db: Session):
-    db.query(DbUser).filter(DbUser.id == id).delete()
+    user = db.query(DbUser).filter(DbUser.id == id).first()
+    if not user:
+        raise HTTPException(
+            status_code=404, detail=f'User with {id} not found')
+    db.delete(user)
     db.commit()
