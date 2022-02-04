@@ -1,9 +1,10 @@
 from turtle import width
 from urllib import response
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Header
 from db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
+from typing import Optional, List
 
 router = APIRouter(
     prefix='/product',
@@ -18,6 +19,17 @@ def get_all_products():
     # return product
     data = " ".join(product)
     return Response(content=data, media_type="text/plain")
+
+
+# @router.get('/withheader')
+# def get_products(response: Response, custom_header: Optional[str] = Header(None)):
+#     return None
+
+# multiple headers
+@router.get('/withheader')
+def get_products(response: Response, custom_header: List[Optional[str]] = Header(None)):
+    response.headers['custom_response_header'] = ", ".join(custom_header)
+    return None
 
 
 @router.get('/{id}', responses={
