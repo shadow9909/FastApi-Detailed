@@ -1,13 +1,7 @@
-from pydantic import BaseModel
 from typing import List
+from pydantic import BaseModel
 
-
-class User(BaseModel):
-    id: int
-    username: str
-
-    class Config():
-        orm_mode = True
+# Article inside UserDisplay
 
 
 class Article(BaseModel):
@@ -25,21 +19,20 @@ class UserBase(BaseModel):
     password: str
 
 
-class ArticleDisplay(BaseModel):
-    title: str
-    content: str
-    published: bool
-    user: User
-
-    class Config:
-        orm_mode = True
-
-
 class UserDisplay(BaseModel):
     username: str
     email: str
     items: List[Article] = []
-    # used for Response Model-> to map DB data to objects
+
+    class Config():
+        orm_mode = True
+
+# User inside ArticleDisplay
+
+
+class User(BaseModel):
+    id: int
+    username: str
 
     class Config():
         orm_mode = True
@@ -50,3 +43,13 @@ class ArticleBase(BaseModel):
     content: str
     published: bool
     creator_id: int
+
+
+class ArticleDisplay(BaseModel):
+    title: str
+    content: str
+    published: bool
+    user: User
+
+    class Config():
+        orm_mode = True
