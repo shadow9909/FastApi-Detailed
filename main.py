@@ -1,9 +1,10 @@
 from http.client import HTTPException
 from typing import Optional
+
 from exceptions import StoryException
 from fastapi import FastAPI, Request, Response, Depends
 from enum import Enum
-from router import article, blog, user
+from router import article, blog, user, product
 from db import models
 from db.database import engine
 from fastapi.responses import JSONResponse
@@ -38,6 +39,7 @@ def hello():
 app.include_router(blog.router)
 app.include_router(user.router)
 app.include_router(article.router)
+app.include_router(product.router)
 
 
 @app.get('/dependency')
