@@ -1,6 +1,6 @@
 from turtle import width
 from urllib import response
-from fastapi import APIRouter, Depends, Response, Header
+from fastapi import APIRouter, Depends, Response, Header, Cookie
 from db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
@@ -27,9 +27,16 @@ def get_all_products():
 
 # multiple headers
 @router.get('/withheader')
-def get_products(response: Response, custom_header: List[Optional[str]] = Header(None)):
+def get_products(response: Response, custom_header: List[Optional[str]] = Header(None), test_cookie: Optional[str] = Cookie(None)):
     response.headers['custom_response_header'] = ", ".join(custom_header)
-    return None
+    response.set_cookie(key="test_cookie", value="test_cookie_value")
+    if custom_header:
+        custom_header = ", ".join(custom_header)
+    return {
+        'data': product,
+        'custom_header': custom_header,
+        'my_cookie': test_cookie
+    }
 
 
 @router.get('/{id}', responses={
