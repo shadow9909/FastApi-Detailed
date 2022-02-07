@@ -7,6 +7,8 @@ from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth
 from fastapi.staticfiles import StaticFiles
+import os
+dir_path = os.getcwd()
 
 app = FastAPI()
 

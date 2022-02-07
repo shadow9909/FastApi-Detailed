@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 import shutil
+from starlette.responses import FileResponse
+
+import os
 
 router = APIRouter(
     prefix='/file',
@@ -22,3 +25,8 @@ def upload_file(upload_file: UploadFile = File(...)):
     return {
         'path': path
     }
+
+
+@router.get('/{fname}')
+def download_file(fname: str):
+    return FileResponse(os.path.join(os.getcwd(), 'static', fname), media_type='application/octet-stream', filename=fname)
