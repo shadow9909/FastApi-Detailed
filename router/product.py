@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
 from typing import Optional, List
 from auth.oauth2 import oauth2_scheme
+from custom_log import log
 
 router = APIRouter(
     prefix='/product',
@@ -35,6 +36,7 @@ def get_all_products():
 # multiple headers
 @router.get('/withheader')
 def get_products(response: Response, custom_header: List[Optional[str]] = Header(None), test_cookie: Optional[str] = Cookie(None)):
+    log("MyAPI", "Call to get all products")
     response.headers['custom_response_header'] = ", ".join(custom_header)
     response.set_cookie(key="test_cookie", value="test_cookie_value")
     if custom_header:
