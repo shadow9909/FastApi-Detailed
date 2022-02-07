@@ -1,10 +1,11 @@
 from turtle import width
 from urllib import response
-from fastapi import APIRouter, Depends, Response, Header, Cookie
+from fastapi import APIRouter, Depends, Response, Header, Cookie, Form
 from db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi.responses import HTMLResponse
 from typing import Optional, List
+from auth.oauth2 import oauth2_scheme
 
 router = APIRouter(
     prefix='/product',
@@ -12,6 +13,12 @@ router = APIRouter(
 )
 
 product = ['boat', 'watch', 'ink']
+
+
+@router.post('/new')
+def create_product(name: str = Form(...), token: str = Depends(oauth2_scheme)):
+    product.append(name)
+    return product
 
 
 @router.get('/all')

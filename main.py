@@ -1,16 +1,26 @@
-from http.client import HTTPException
-from typing import Optional
-
 from exceptions import StoryException
-from fastapi import FastAPI, Request, Response, Depends
-from enum import Enum
+from fastapi import FastAPI, Request, Depends
 from router import article, blog, user, product
 from db import models
 from db.database import engine
-from fastapi.responses import JSONResponse
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from auth import auth
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get('/')
@@ -40,6 +50,8 @@ app.include_router(blog.router)
 app.include_router(user.router)
 app.include_router(article.router)
 app.include_router(product.router)
+
+app.include_router(auth.router)
 
 
 @app.get('/dependency')
