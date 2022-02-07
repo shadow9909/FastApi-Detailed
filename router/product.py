@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from typing import Optional, List
 from auth.oauth2 import oauth2_scheme
 from custom_log import log
+from datetime import time
 
 router = APIRouter(
     prefix='/product',
@@ -16,6 +17,11 @@ router = APIRouter(
 product = ['boat', 'watch', 'ink']
 
 
+async def time_consuming_func():
+    time.sleep(5)
+    return 'ok'
+
+
 @router.post('/new')
 def create_product(name: str = Form(...), token: str = Depends(oauth2_scheme)):
     product.append(name)
@@ -23,8 +29,9 @@ def create_product(name: str = Form(...), token: str = Depends(oauth2_scheme)):
 
 
 @router.get('/all')
-def get_all_products():
+async def get_all_products():
     # return product
+    await time_consuming_func()
     data = " ".join(product)
     return Response(content=data, media_type="text/plain")
 
