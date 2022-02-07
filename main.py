@@ -1,3 +1,4 @@
+from urllib import response
 from exceptions import StoryException
 from fastapi import FastAPI, Request, Depends
 from router import article, blog, user, product, files
@@ -9,7 +10,7 @@ from auth import auth
 from fastapi.staticfiles import StaticFiles
 import os
 from fastapi.templating import Jinja2Templates
-
+import time
 
 dir_path = os.getcwd()
 
@@ -32,6 +33,15 @@ app.add_middleware(
 @app.get("/items/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "id": id})
+
+
+@app.middleware("http")
+async def add_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    response.headers['duration'] = str(duration)
+    return response
 
 
 @app.get('/')
