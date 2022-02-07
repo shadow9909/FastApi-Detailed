@@ -3,15 +3,18 @@ from fastapi import FastAPI, Request, Depends
 from router import article, blog, user, product, files
 from db import models
 from db.database import engine
-from fastapi.responses import PlainTextResponse, JSONResponse
+from fastapi.responses import PlainTextResponse, JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth
 from fastapi.staticfiles import StaticFiles
 import os
+from fastapi.templating import Jinja2Templates
+
+
 dir_path = os.getcwd()
 
 app = FastAPI()
-
+templates = Jinja2Templates(directory="templates")
 
 origins = [
     "http://localhost:3000"
@@ -24,6 +27,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/items/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: str):
+    return templates.TemplateResponse("item.html", {"request": request, "id": id})
 
 
 @app.get('/')
