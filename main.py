@@ -1,6 +1,7 @@
+from http import client
 from urllib import response
 from exceptions import StoryException
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, WebSocket
 from router import article, blog, user, product, files
 from db import models
 from db.database import engine
@@ -44,16 +45,16 @@ async def add_middleware(request: Request, call_next):
     return response
 
 
-@app.get('/')
-def hello():
-    """[summary]
-    - **id** mandatory path parameter
-    - **id** mandatory path parameter
+# @app.get('/')
+# def hello():
+#     """[summary]
+#     - **id** mandatory path parameter
+#     - **id** mandatory path parameter
 
-    Returns:
-        [type]: [description]
-    """
-    return {'detail': 'Hello World'}
+#     Returns:
+#         [type]: [description]
+#     """
+#     return {'detail': 'Hello World'}
 
 
 # class BlogType(str, Enum):
@@ -74,6 +75,57 @@ app.include_router(product.router)
 app.include_router(files.router)
 
 app.include_router(auth.router)
+
+
+html = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:8000/ws");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
+"""
+
+
+@app.get("/")
+async def get():
+    return HTMLResponse(html)
+
+clients = []
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    clients.append(websocket)
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
 
 
 @app.get('/dependency')
