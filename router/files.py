@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, File, UploadFile
-from fastapi.staticfiles import StaticFiles
 import shutil
 
 router = APIRouter(
-    prefix='/files',
+    prefix='/file',
     tags=['file']
 )
 
@@ -23,6 +22,3 @@ def upload_file(upload_file: UploadFile = File(...)):
     return {
         'path': path
     }
-
-
-router.mount("/static", StaticFiles(directory="static"), name="static")

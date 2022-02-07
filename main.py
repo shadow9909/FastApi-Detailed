@@ -6,6 +6,7 @@ from db.database import engine
 from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
@@ -66,6 +67,9 @@ def story_exception_handler(request: Request, exc: StoryException):
         status_code=418,
         content={"message": "No Stories Please"}
     )
+
+
+app.mount("/file", StaticFiles(directory="static"), name="static")
 
 
 # @app.exception_handler(HTTPException)
